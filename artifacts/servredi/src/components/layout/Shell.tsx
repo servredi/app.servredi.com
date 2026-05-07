@@ -78,7 +78,9 @@ export function Shell({ children }: ShellProps) {
       <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-50 bg-slate-700 border-r border-slate-500">
         <div className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4">
           <div className="flex h-20 shrink-0 items-center">
-            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ServRedi" className="h-10 w-auto" />
+            <div className="bg-white rounded-lg px-3 py-1.5 shadow">
+              <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ServRedi" className="h-9 w-auto" />
+            </div>
           </div>
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -112,7 +114,9 @@ export function Shell({ children }: ShellProps) {
 
       {/* Mobile Top Header */}
       <div className="md:hidden flex h-14 shrink-0 items-center justify-between border-b border-slate-600 bg-slate-700 px-4 sticky top-0 z-40">
-        <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ServRedi" className="h-7 w-auto" />
+        <div className="bg-white rounded-md px-2.5 py-1 shadow">
+          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ServRedi" className="h-6 w-auto" />
+        </div>
         <div className="flex items-center gap-4">
           {user?.imageUrl && (
             <img

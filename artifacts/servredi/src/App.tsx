@@ -94,7 +94,9 @@ function SignUpPage() {
 function Home() {
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 text-center">
-      <img src={`${basePath}/logo.png`} alt="ServRedi" className="h-16 mb-8" />
+      <div className="mb-8 bg-white rounded-xl px-6 py-3 shadow-lg">
+        <img src={`${basePath}/logo.png`} alt="ServRedi" className="h-14 w-auto" />
+      </div>
       <h1 className="text-4xl font-bold tracking-tight text-slate-100 sm:text-6xl">
         Command Center for <span className="text-orange-500">Field Ops</span>
       </h1>
