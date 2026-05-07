@@ -3,20 +3,38 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: ServRedi FSM API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: profile
+    description: User profile operations
+  - name: customers
+    description: CRM customer operations
+  - name: jobs
+    description: Job management operations
+  - name: jobTasks
+    description: Job task operations
+  - name: schedule
+    description: Schedule operations
+  - name: timeTracking
+    description: Time tracking operations
+  - name: quotes
+    description: Quote/estimate operations
+  - name: reports
+    description: Reporting operations
+  - name: dashboard
+    description: Dashboard summary operations
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +42,811 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ── Profile ──────────────────────────────────────────────────────────────────
+  /profile/me:
+    get:
+      operationId: getMyProfile
+      tags: [profile]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "404":
+          description: Not found
+    put:
+      operationId: updateMyProfile
+      tags: [profile]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileBody"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+
+  # ── Customers ─────────────────────────────────────────────────────────────
+  /customers:
+    get:
+      operationId: listCustomers
+      tags: [customers]
+      summary: List all customers
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Customer"
+    post:
+      operationId: createCustomer
+      tags: [customers]
+      summary: Create a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCustomerBody"
+      responses:
+        "201":
+          description: Created customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+
+  /customers/{id}:
+    get:
+      operationId: getCustomer
+      tags: [customers]
+      summary: Get a customer by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateCustomer
+      tags: [customers]
+      summary: Update a customer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCustomerBody"
+      responses:
+        "200":
+          description: Updated customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+    delete:
+      operationId: deleteCustomer
+      tags: [customers]
+      summary: Delete a customer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /customers/{id}/jobs:
+    get:
+      operationId: getCustomerJobs
+      tags: [customers]
+      summary: Get all jobs for a customer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Customer jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Job"
+
+  # ── Jobs ──────────────────────────────────────────────────────────────────
+  /jobs:
+    get:
+      operationId: listJobs
+      tags: [jobs]
+      summary: List all jobs
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: technicianId
+          in: query
+          schema:
+            type: integer
+        - name: date
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Job"
+    post:
+      operationId: createJob
+      tags: [jobs]
+      summary: Create a new job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateJobBody"
+      responses:
+        "201":
+          description: Created job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+
+  /jobs/{id}:
+    get:
+      operationId: getJob
+      tags: [jobs]
+      summary: Get a job by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Job with tasks
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobWithTasks"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateJob
+      tags: [jobs]
+      summary: Update a job
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateJobBody"
+      responses:
+        "200":
+          description: Updated job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+    delete:
+      operationId: deleteJob
+      tags: [jobs]
+      summary: Delete a job
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /jobs/{id}/status:
+    patch:
+      operationId: updateJobStatus
+      tags: [jobs]
+      summary: Update job status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateJobStatusBody"
+      responses:
+        "200":
+          description: Updated job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+
+  # ── Job Tasks ─────────────────────────────────────────────────────────────
+  /jobs/{jobId}/tasks:
+    get:
+      operationId: listJobTasks
+      tags: [jobTasks]
+      summary: List tasks for a job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/JobTask"
+    post:
+      operationId: createJobTask
+      tags: [jobTasks]
+      summary: Create a task for a job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateJobTaskBody"
+      responses:
+        "201":
+          description: Created task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobTask"
+
+  /jobs/{jobId}/tasks/{taskId}:
+    patch:
+      operationId: updateJobTask
+      tags: [jobTasks]
+      summary: Update a job task
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateJobTaskBody"
+      responses:
+        "200":
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobTask"
+    delete:
+      operationId: deleteJobTask
+      tags: [jobTasks]
+      summary: Delete a job task
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── Schedule ──────────────────────────────────────────────────────────────
+  /schedule:
+    get:
+      operationId: getSchedule
+      tags: [schedule]
+      summary: Get scheduled jobs for a date range
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: technicianId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Schedule entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScheduleEntry"
+
+  # ── Time Tracking ─────────────────────────────────────────────────────────
+  /time-entries:
+    get:
+      operationId: listTimeEntries
+      tags: [timeTracking]
+      summary: List time entries
+      parameters:
+        - name: technicianId
+          in: query
+          schema:
+            type: integer
+        - name: jobId
+          in: query
+          schema:
+            type: integer
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Time entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TimeEntry"
+    post:
+      operationId: createTimeEntry
+      tags: [timeTracking]
+      summary: Clock in — start a time entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTimeEntryBody"
+      responses:
+        "201":
+          description: Created time entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntry"
+
+  /time-entries/active:
+    get:
+      operationId: getActiveTimeEntry
+      tags: [timeTracking]
+      summary: Get current user's active time entry
+      responses:
+        "200":
+          description: Active time entry or null
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntryOrNull"
+
+  /time-entries/{id}/clock-out:
+    patch:
+      operationId: clockOut
+      tags: [timeTracking]
+      summary: Clock out — end a time entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClockOutBody"
+      responses:
+        "200":
+          description: Ended time entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntry"
+
+  /time-entries/{id}/break:
+    patch:
+      operationId: updateBreak
+      tags: [timeTracking]
+      summary: Start or end a break
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBreakBody"
+      responses:
+        "200":
+          description: Updated time entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntry"
+
+  # ── Quotes ────────────────────────────────────────────────────────────────
+  /quotes:
+    get:
+      operationId: listQuotes
+      tags: [quotes]
+      summary: List all quotes
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: customerId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of quotes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Quote"
+    post:
+      operationId: createQuote
+      tags: [quotes]
+      summary: Create a quote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuoteBody"
+      responses:
+        "201":
+          description: Created quote
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Quote"
+
+  /quotes/{id}:
+    get:
+      operationId: getQuote
+      tags: [quotes]
+      summary: Get a quote by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Quote with line items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuoteWithItems"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateQuote
+      tags: [quotes]
+      summary: Update a quote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateQuoteBody"
+      responses:
+        "200":
+          description: Updated quote
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Quote"
+    delete:
+      operationId: deleteQuote
+      tags: [quotes]
+      summary: Delete a quote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /quotes/{id}/items:
+    post:
+      operationId: addQuoteItem
+      tags: [quotes]
+      summary: Add a line item to a quote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuoteItemBody"
+      responses:
+        "201":
+          description: Created quote item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuoteItem"
+
+  /quotes/{id}/items/{itemId}:
+    patch:
+      operationId: updateQuoteItem
+      tags: [quotes]
+      summary: Update a quote line item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateQuoteItemBody"
+      responses:
+        "200":
+          description: Updated quote item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuoteItem"
+    delete:
+      operationId: deleteQuoteItem
+      tags: [quotes]
+      summary: Delete a quote line item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── Dashboard ─────────────────────────────────────────────────────────────
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard KPI summary
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Get recent activity feed
+      responses:
+        "200":
+          description: Recent activity items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  /dashboard/jobs-today:
+    get:
+      operationId: getJobsToday
+      tags: [dashboard]
+      summary: Get today's jobs
+      responses:
+        "200":
+          description: Today's jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Job"
+
+  # ── Reports ───────────────────────────────────────────────────────────────
+  /reports/employee-hours:
+    get:
+      operationId: getEmployeeHoursReport
+      tags: [reports]
+      summary: Employee hours report
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: technicianId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Employee hours data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmployeeHoursRow"
+
+  /reports/jobs-summary:
+    get:
+      operationId: getJobsSummaryReport
+      tags: [reports]
+      summary: Jobs summary report
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Jobs summary data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobsSummaryReport"
+
+  /reports/technicians:
+    get:
+      operationId: getTechniciansList
+      tags: [reports]
+      summary: List all technicians (users with technician role)
+      responses:
+        "200":
+          description: List of technicians
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Profile"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +857,815 @@ components:
       required:
         - status
 
+    Profile:
+      type: object
+      properties:
+        id:
+          type: integer
+        clerkUserId:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: ["string", "null"]
+        lastName:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [admin, dispatcher, technician]
+        phone:
+          type: ["string", "null"]
+        organizationId:
+          type: ["integer", "null"]
+        organizationName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - clerkUserId
+        - email
+        - role
+        - createdAt
+        - updatedAt
+
+    UpdateProfileBody:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        organizationName:
+          type: string
+
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+        organizationId:
+          type: integer
+        name:
+          type: string
+        company:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        city:
+          type: ["string", "null"]
+        state:
+          type: ["string", "null"]
+        zip:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        totalJobs:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - organizationId
+        - name
+        - totalJobs
+        - createdAt
+        - updatedAt
+
+    CreateCustomerBody:
+      type: object
+      properties:
+        name:
+          type: string
+        company:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+        notes:
+          type: string
+      required:
+        - name
+
+    UpdateCustomerBody:
+      type: object
+      properties:
+        name:
+          type: string
+        company:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+        notes:
+          type: string
+
+    Job:
+      type: object
+      properties:
+        id:
+          type: integer
+        organizationId:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        customerId:
+          type: integer
+        customerName:
+          type: string
+        technicianId:
+          type: ["integer", "null"]
+        technicianName:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [scheduled, in_progress, completed, cancelled, on_hold]
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+        scheduledDate:
+          type: ["string", "null"]
+        startTime:
+          type: ["string", "null"]
+        endTime:
+          type: ["string", "null"]
+        estimatedHours:
+          type: ["number", "null"]
+        actualHours:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - organizationId
+        - title
+        - customerId
+        - customerName
+        - status
+        - priority
+        - createdAt
+        - updatedAt
+
+    JobWithTasks:
+      type: object
+      properties:
+        id:
+          type: integer
+        organizationId:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        customerId:
+          type: integer
+        customerName:
+          type: string
+        technicianId:
+          type: ["integer", "null"]
+        technicianName:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [scheduled, in_progress, completed, cancelled, on_hold]
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+        scheduledDate:
+          type: ["string", "null"]
+        startTime:
+          type: ["string", "null"]
+        endTime:
+          type: ["string", "null"]
+        estimatedHours:
+          type: ["number", "null"]
+        actualHours:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/JobTask"
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - organizationId
+        - title
+        - customerId
+        - customerName
+        - status
+        - priority
+        - tasks
+        - createdAt
+        - updatedAt
+
+    CreateJobBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        customerId:
+          type: integer
+        technicianId:
+          type: integer
+        status:
+          type: string
+          enum: [scheduled, in_progress, completed, cancelled, on_hold]
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+        scheduledDate:
+          type: string
+        startTime:
+          type: string
+        endTime:
+          type: string
+        estimatedHours:
+          type: number
+        notes:
+          type: string
+        address:
+          type: string
+      required:
+        - title
+        - customerId
+
+    UpdateJobBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        customerId:
+          type: integer
+        technicianId:
+          type: integer
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+        scheduledDate:
+          type: string
+        startTime:
+          type: string
+        endTime:
+          type: string
+        estimatedHours:
+          type: number
+        notes:
+          type: string
+        address:
+          type: string
+
+    UpdateJobStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [scheduled, in_progress, completed, cancelled, on_hold]
+      required:
+        - status
+
+    JobTask:
+      type: object
+      properties:
+        id:
+          type: integer
+        jobId:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        completed:
+          type: boolean
+        estimatedHours:
+          type: ["number", "null"]
+        actualHours:
+          type: ["number", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - jobId
+        - title
+        - completed
+        - createdAt
+        - updatedAt
+
+    CreateJobTaskBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        estimatedHours:
+          type: number
+      required:
+        - title
+
+    UpdateJobTaskBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        completed:
+          type: boolean
+        estimatedHours:
+          type: number
+        actualHours:
+          type: number
+
+    ScheduleEntry:
+      type: object
+      properties:
+        jobId:
+          type: integer
+        title:
+          type: string
+        customerName:
+          type: string
+        technicianId:
+          type: ["integer", "null"]
+        technicianName:
+          type: ["string", "null"]
+        status:
+          type: string
+        priority:
+          type: string
+        scheduledDate:
+          type: string
+        startTime:
+          type: ["string", "null"]
+        endTime:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+      required:
+        - jobId
+        - title
+        - customerName
+        - status
+        - priority
+        - scheduledDate
+
+    TimeEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        organizationId:
+          type: integer
+        technicianId:
+          type: integer
+        technicianName:
+          type: string
+        jobId:
+          type: ["integer", "null"]
+        jobTitle:
+          type: ["string", "null"]
+        taskId:
+          type: ["integer", "null"]
+        clockInAt:
+          type: string
+        clockOutAt:
+          type: ["string", "null"]
+        breakMinutes:
+          type: integer
+        totalMinutes:
+          type: ["integer", "null"]
+        notes:
+          type: ["string", "null"]
+        latitude:
+          type: ["number", "null"]
+        longitude:
+          type: ["number", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - organizationId
+        - technicianId
+        - technicianName
+        - clockInAt
+        - breakMinutes
+        - isActive
+        - createdAt
+        - updatedAt
+
+    TimeEntryOrNull:
+      type: object
+      properties:
+        entry:
+          oneOf:
+            - $ref: "#/components/schemas/TimeEntry"
+            - type: "null"
+      required:
+        - entry
+
+    CreateTimeEntryBody:
+      type: object
+      properties:
+        jobId:
+          type: integer
+        taskId:
+          type: integer
+        notes:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+
+    ClockOutBody:
+      type: object
+      properties:
+        notes:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+
+    UpdateBreakBody:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [start, end]
+        breakMinutes:
+          type: integer
+      required:
+        - action
+
+    Quote:
+      type: object
+      properties:
+        id:
+          type: integer
+        organizationId:
+          type: integer
+        customerId:
+          type: integer
+        customerName:
+          type: string
+        status:
+          type: string
+          enum: [draft, sent, approved, rejected]
+        notes:
+          type: ["string", "null"]
+        taxRate:
+          type: number
+        subtotal:
+          type: number
+        taxAmount:
+          type: number
+        total:
+          type: number
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - organizationId
+        - customerId
+        - customerName
+        - status
+        - taxRate
+        - subtotal
+        - taxAmount
+        - total
+        - createdAt
+        - updatedAt
+
+    QuoteWithItems:
+      type: object
+      properties:
+        id:
+          type: integer
+        organizationId:
+          type: integer
+        customerId:
+          type: integer
+        customerName:
+          type: string
+        status:
+          type: string
+          enum: [draft, sent, approved, rejected]
+        notes:
+          type: ["string", "null"]
+        taxRate:
+          type: number
+        subtotal:
+          type: number
+        taxAmount:
+          type: number
+        total:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuoteItem"
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - organizationId
+        - customerId
+        - customerName
+        - status
+        - taxRate
+        - subtotal
+        - taxAmount
+        - total
+        - items
+        - createdAt
+        - updatedAt
+
+    CreateQuoteBody:
+      type: object
+      properties:
+        customerId:
+          type: integer
+        notes:
+          type: string
+        taxRate:
+          type: number
+      required:
+        - customerId
+
+    UpdateQuoteBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [draft, sent, approved, rejected]
+        notes:
+          type: string
+        taxRate:
+          type: number
+
+    QuoteItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        quoteId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        quantity:
+          type: number
+        unitCost:
+          type: number
+        laborHours:
+          type: ["number", "null"]
+        laborRate:
+          type: ["number", "null"]
+        materialCost:
+          type: ["number", "null"]
+        lineTotal:
+          type: number
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - quoteId
+        - name
+        - quantity
+        - unitCost
+        - lineTotal
+        - createdAt
+        - updatedAt
+
+    CreateQuoteItemBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        quantity:
+          type: number
+        unitCost:
+          type: number
+        laborHours:
+          type: number
+        laborRate:
+          type: number
+        materialCost:
+          type: number
+      required:
+        - name
+        - quantity
+        - unitCost
+
+    UpdateQuoteItemBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        quantity:
+          type: number
+        unitCost:
+          type: number
+        laborHours:
+          type: number
+        laborRate:
+          type: number
+        materialCost:
+          type: number
+
+    DashboardSummary:
+      type: object
+      properties:
+        jobsToday:
+          type: integer
+        jobsInProgress:
+          type: integer
+        jobsCompleted:
+          type: integer
+        activeTechnicians:
+          type: integer
+        openQuotes:
+          type: integer
+        openQuotesValue:
+          type: number
+        hoursToday:
+          type: number
+        pendingJobs:
+          type: integer
+      required:
+        - jobsToday
+        - jobsInProgress
+        - jobsCompleted
+        - activeTechnicians
+        - openQuotes
+        - openQuotesValue
+        - hoursToday
+        - pendingJobs
+
+    ActivityItem:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [job_created, job_updated, job_completed, customer_created, quote_created, clock_in, clock_out]
+        description:
+          type: string
+        relatedId:
+          type: ["integer", "null"]
+        relatedType:
+          type: ["string", "null"]
+        timestamp:
+          type: string
+      required:
+        - id
+        - type
+        - description
+        - timestamp
+
+    EmployeeHoursRow:
+      type: object
+      properties:
+        technicianId:
+          type: integer
+        technicianName:
+          type: string
+        totalHours:
+          type: number
+        breakHours:
+          type: number
+        netHours:
+          type: number
+        jobsWorked:
+          type: integer
+        entries:
+          type: integer
+      required:
+        - technicianId
+        - technicianName
+        - totalHours
+        - breakHours
+        - netHours
+        - jobsWorked
+        - entries
+
+    JobsSummaryReport:
+      type: object
+      properties:
+        totalJobs:
+          type: integer
+        completedJobs:
+          type: integer
+        cancelledJobs:
+          type: integer
+        inProgressJobs:
+          type: integer
+        scheduledJobs:
+          type: integer
+        completionRate:
+          type: number
+        statusBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusCount"
+        priorityBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/PriorityCount"
+      required:
+        - totalJobs
+        - completedJobs
+        - cancelledJobs
+        - inProgressJobs
+        - scheduledJobs
+        - completionRate
+        - statusBreakdown
+        - priorityBreakdown
+
+    StatusCount:
+      type: object
+      properties:
+        status:
+          type: string
+        count:
+          type: integer
+      required:
+        - status
+        - count
+
+    PriorityCount:
+      type: object
+      properties:
+        priority:
+          type: string
+        count:
+          type: integer
+      required:
+        - priority
+        - count

@@ -1,0 +1,758 @@
+# SERVREDI MVP BUILD PROMPT (NEXT.JS VERSION)
+
+We are building the MVP for a SaaS FSM (Field Service Management) platform called “ServRedi”.
+
+Current marketing website:
+https://www.servredi.com/
+
+The MVP app will live at:
+app.servredi.com
+
+The product should feel modern, clean, mobile-first, fast, and similar in UX quality to modern FSM tools like:
+
+* Jobber
+* Housecall Pro
+* ServiceTitan
+* ClockShark
+* FieldPulse
+
+BUT simpler and cleaner for MVP.
+
+The app MUST be:
+
+* Mobile responsive
+* Tablet responsive
+* Desktop responsive
+* Built for field technicians using mobile web browsers
+* Built with scalability in mind
+* Structured cleanly for future expansion
+
+We are NOT building a throwaway prototype.
+We are building a real production-ready MVP foundation.
+
+---
+
+# TECH STACK REQUIREMENTS
+
+Frontend Framework:
+
+* Next.js 15 using App Router
+* TypeScript
+* TailwindCSS
+* shadcn/ui
+
+Frontend Libraries:
+
+* TanStack Query (React Query)
+* Zustand for state management
+* React Hook Form
+* Zod validation
+* Lucide React icons
+* Recharts for reporting charts
+
+Backend:
+
+* Supabase
+* PostgreSQL
+* Supabase Auth
+* Row Level Security (RLS)
+* Realtime subscriptions where helpful
+
+Hosting:
+
+* Replit deployment initially
+* Must be deployable later to Vercel
+* Domain/subdomain ready
+
+Architecture:
+
+* Multi-tenant SaaS architecture
+* Every company’s data must be isolated
+* Clean scalable folder structure
+* Modular architecture
+* Reusable components
+* Environment variables for secrets
+* Mobile-first engineering approach
+
+---
+
+# VERY IMPORTANT DEVELOPMENT ORDER
+
+Build in this order:
+
+PHASE 1:
+
+1. Database schema
+2. Supabase auth
+3. Row Level Security policies
+4. Organization architecture
+5. User roles
+6. App layouts/navigation
+
+PHASE 2:
+
+1. CRM
+2. Jobs
+3. Scheduling
+
+PHASE 3:
+
+1. Time tracking
+2. GPS tracking
+3. Reports
+
+PHASE 4:
+
+1. Quotes
+2. Mobile optimization
+3. UI polish
+4. Performance optimization
+
+DO NOT start with frontend-only mockups.
+Database architecture comes first.
+
+---
+
+# NEXT.JS REQUIREMENTS
+
+Use:
+
+* Next.js 15 App Router
+* Route groups
+* Nested layouts
+* Server Components where appropriate
+* Client Components only when needed
+* Middleware for route protection
+* Route handlers/API routes where appropriate
+* Server actions where beneficial
+
+Architecture goals:
+
+* Production-grade SaaS architecture
+* Scalable structure
+* Separation of concerns
+* Proper server/client boundaries
+
+---
+
+# CORE DESIGN REQUIREMENTS
+
+The app theme/colors/branding should match:
+https://www.servredi.com/
+
+Design style:
+
+* Dark modern FSM aesthetic
+* Industrial-modern
+* Clean cards
+* Rounded corners
+* Soft shadows
+* Smooth transitions
+* Mobile-first UX
+* Fast loading
+* Operational feel
+* Professional blue/black theme matching marketing site
+
+The app should feel:
+
+* Efficient
+* Operational
+* Trustworthy
+* Professional
+* Fast
+* Easy for field technicians
+
+---
+
+# AUTHENTICATION + MULTI TENANCY
+
+Implement:
+
+* Email/password login
+* Forgot password
+* Organization/company creation
+* Invite user architecture ready
+
+User roles:
+
+* Admin
+* Dispatcher
+* Technician
+
+Each user belongs to:
+
+* One organization
+
+Each organization has isolated:
+
+* Customers
+* Jobs
+* Employees
+* Reports
+* Quotes
+* Tasks
+* Time entries
+
+Use:
+
+* Supabase Auth
+* Row Level Security
+* Middleware-protected routes
+
+VERY IMPORTANT:
+Proper multi-tenant isolation is mandatory.
+
+---
+
+# DATABASE REQUIREMENTS
+
+Create a proper normalized PostgreSQL schema.
+
+Use:
+
+* UUID primary keys
+* Foreign key constraints
+* Indexed lookup fields
+* created_at timestamps
+* updated_at timestamps
+* organization_id on all tenant tables
+
+Core tables:
+
+* organizations
+* profiles/users
+* customers
+* jobs
+* job_tasks
+* schedules
+* employees
+* time_entries
+* breaks
+* quotes
+* quote_items
+* reports
+* notes
+
+Generate:
+
+1. SQL schema
+2. Supabase migrations
+3. RLS policies
+4. Seed/demo data
+
+BEFORE building frontend pages.
+
+---
+
+# FILE STRUCTURE REQUIREMENTS
+
+Use clean scalable architecture.
+
+Preferred structure:
+
+/app
+/components
+/features
+/lib
+/services
+/hooks
+/stores
+/types
+/utils
+/styles
+
+Feature-based architecture preferred.
+
+Avoid:
+
+* Giant files
+* Duplicate logic
+* Mixed responsibilities
+* Hardcoded values
+* Monolithic components
+
+Keep:
+
+* Business logic isolated
+* API access centralized
+* Types organized
+* Components reusable
+
+---
+
+# STATE MANAGEMENT
+
+Use Zustand for:
+
+* Auth state
+* Active timer state
+* Mobile navigation state
+* Organization state
+* UI preferences
+
+Use TanStack Query for:
+
+* Server state
+* Caching
+* Background refetching
+* Optimistic updates
+* Data synchronization
+
+---
+
+# REQUIRED MVP FEATURES
+
+# 1. DASHBOARD
+
+Dashboard should display:
+
+* Jobs scheduled today
+* Active technicians
+* Jobs in progress
+* Open quotes
+* Recent activity
+* Revenue snapshot
+* Quick actions
+
+Widgets/cards:
+
+* Total hours today
+* Jobs completed
+* Active techs
+* Pending estimates
+* Estimated revenue
+
+---
+
+# 2. NAVIGATION
+
+Desktop:
+
+* Left sidebar navigation
+
+Mobile:
+
+* Sticky bottom navigation
+* Hamburger menu
+
+Navigation items:
+
+* Dashboard
+* Schedule
+* Jobs
+* Time Tracking
+* CRM
+* Quotes
+* Reports
+* Settings
+
+Include:
+
+* User profile
+* Organization name
+* Logout
+
+---
+
+# 3. SCHEDULING / DISPATCHING
+
+Features:
+
+* Day/week calendar view
+* Assign technicians
+* Create/edit jobs
+* Mobile-friendly schedule cards
+* Task checklists
+* Status tracking
+
+Job fields:
+
+* Customer
+* Job title
+* Description
+* Assigned technician
+* Date
+* Start/end time
+* Status
+* Priority
+* Notes
+
+Statuses:
+
+* Scheduled
+* In Progress
+* Completed
+* Cancelled
+* On Hold
+
+Tasks:
+
+* Multiple tasks per job
+* Estimated hours
+* Actual hours tracking
+
+Architecture should be ready for future drag/drop scheduling.
+
+---
+
+# 4. TIME TRACKING + GPS
+
+CORE FEATURE.
+
+Implement:
+
+* Clock in
+* Clock out
+* Start break
+* End break
+* Select customer/job/task
+* Add notes
+* GPS location capture
+
+Track:
+
+* Start time
+* End time
+* Break duration
+* GPS coordinates
+* Labor duration
+* Notes
+
+Workflow:
+
+1. Open app
+2. Select job
+3. Select task
+4. Clock in
+5. GPS captured automatically
+6. Optional notes
+7. Break handling
+8. Clock out
+
+Requirements:
+
+* Running timer UI
+* Active shift persistence
+* Mobile optimized UX
+* Architecture ready for offline support later
+
+---
+
+# 5. CRM
+
+Customer fields:
+
+* Name
+* Company
+* Phone
+* Email
+* Address
+* Notes
+
+Features:
+
+* Search customers
+* Create/edit customers
+* Customer detail pages
+* Customer jobs
+* Customer quotes
+* Mobile quick call/email actions
+
+---
+
+# 6. QUOTES / ESTIMATES
+
+Need lightweight estimating system.
+
+Quote fields:
+
+* Customer
+* Status
+* Notes
+* Tax
+* Total
+
+Statuses:
+
+* Draft
+* Sent
+* Approved
+* Rejected
+
+Quote line items:
+
+* Name
+* Description
+* Quantity
+* Unit cost
+* Labor hours
+* Labor rate
+* Material cost
+
+Auto calculations:
+
+* Subtotal
+* Tax
+* Total
+
+Field technicians must be able to:
+
+* Build quotes from mobile
+* Save draft
+* Submit estimate
+
+Architecture should support future:
+
+* PDF generation
+* E-signatures
+* Invoicing
+
+---
+
+# 7. JOB COMPLETION REPORTS
+
+Technicians should submit:
+
+* Work completed notes
+* Time spent
+* Materials used
+* Tasks completed
+* Photos placeholder architecture
+* Customer signature placeholder
+
+Need structured report data for future PDF export.
+
+---
+
+# 8. REPORTING
+
+Required reports:
+
+Employee Reports:
+
+* Hours worked
+* Jobs completed
+* Break time
+* Labor efficiency
+* Estimated vs actual hours
+
+Job Reports:
+
+* Labor totals
+* Assigned techs
+* Completion status
+* Estimated vs actual time
+
+Task Reports:
+
+* Completion metrics
+* Labor trends
+* Time by task
+
+Include:
+
+* Date filters
+* Employee filters
+* Job status filters
+
+Use Recharts.
+
+---
+
+# MOBILE EXPERIENCE
+
+THIS IS EXTREMELY IMPORTANT.
+
+This is primarily a technician-facing product.
+
+Must support:
+
+* iPhone Safari
+* Android Chrome
+
+Requirements:
+
+* Large tap targets
+* Thumb-friendly controls
+* Sticky actions
+* Responsive forms
+* Fast navigation
+* Minimal typing
+* Fast loading
+
+Design mobile-first first, desktop second.
+
+---
+
+# SECURITY REQUIREMENTS
+
+Implement:
+
+* Protected routes
+* Multi-tenant isolation
+* Role permissions
+* Input validation
+* Secure environment variables
+* Authentication middleware
+* Proper RLS policies
+
+Permissions:
+Admins:
+
+* Full access
+
+Dispatchers:
+
+* Manage schedules/jobs
+
+Technicians:
+
+* View assigned jobs
+* Track time
+* Submit reports
+
+---
+
+# PERFORMANCE REQUIREMENTS
+
+Optimize:
+
+* Lazy loading
+* Route splitting
+* Database indexing
+* Loading skeletons
+* Mobile performance
+* Query efficiency
+
+---
+
+# FUTURE READY ARCHITECTURE
+
+Build foundation for future features:
+
+* Native mobile apps
+* Push notifications
+* Offline mode
+* Inventory
+* Invoicing
+* Payroll
+* QuickBooks sync
+* Stripe billing
+* Customer portals
+* File uploads
+* Image uploads
+* AI scheduling
+* GPS route optimization
+* Messaging/chat
+
+Do NOT fully build these now.
+Only architect intelligently for future expansion.
+
+---
+
+# CODE QUALITY REQUIREMENTS
+
+Requirements:
+
+* Strong TypeScript typing
+* Reusable components
+* Clean hooks
+* Modular services
+* Maintainable architecture
+* Production-minded code
+
+Avoid:
+
+* Giant components
+* Massive files
+* Tight coupling
+* Duplicate logic
+* Poor organization
+
+Comment complex business logic clearly.
+
+---
+
+# INITIAL PAGES
+
+Build:
+
+1. Login
+2. Register Organization
+3. Dashboard
+4. Schedule
+5. Jobs
+6. Time Tracking
+7. CRM Customers
+8. Quotes
+9. Reports
+10. Settings
+11. Job Details
+12. Customer Details
+
+---
+
+# UI REQUIREMENTS
+
+Include:
+
+* Loading states
+* Empty states
+* Skeleton loaders
+* Toast notifications
+* Error handling
+* Confirmation dialogs
+* Status badges
+
+Create polished reusable:
+
+* Buttons
+* Cards
+* Inputs
+* Tables
+* Mobile navigation
+* Forms
+* Modals
+
+---
+
+# DELIVERABLES
+
+Deliver:
+
+1. Fully functional MVP app
+2. Supabase SQL schema
+3. RLS policies
+4. Responsive mobile UI
+5. README setup documentation
+6. Environment variable setup
+7. Deployment instructions
+8. Seed/demo data
+9. Clean scalable architecture
+
+---
+
+# FINAL IMPORTANT NOTES
+
+This is a real startup SaaS platform.
+
+Prioritize:
+
+1. Mobile usability
+2. Reliability
+3. Multi-tenant security
+4. Scalability
+5. Clean architecture
+6. Fast operational workflows
+
+The app should feel:
+
+* Fast
+* Professional
+* Operational
+* Modern
+* Trustworthy
+
+Do NOT build a toy project.
+
+Build a real scalable SaaS MVP foundation suitable for future expansion.
