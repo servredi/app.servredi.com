@@ -32,7 +32,7 @@ const clerkAppearance = {
   options: {
     logoPlacement: "inside" as const,
     logoLinkUrl: basePath || "/",
-    logoImageUrl: `${window.location.origin}${basePath}/logo.svg`,
+    logoImageUrl: `${window.location.origin}${basePath}/logo.png`,
   },
   variables: {
     colorPrimary: "#F97316",
@@ -94,7 +94,7 @@ function SignUpPage() {
 function Home() {
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 text-center">
-      <img src={`${basePath}/logo.svg`} alt="ServRedi" className="h-16 mb-8" />
+      <img src={`${basePath}/logo.png`} alt="ServRedi" className="h-16 mb-8" />
       <h1 className="text-4xl font-bold tracking-tight text-slate-100 sm:text-6xl">
         Command Center for <span className="text-orange-500">Field Ops</span>
       </h1>
